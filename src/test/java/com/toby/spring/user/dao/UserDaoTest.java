@@ -7,27 +7,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.test.annotation.Rollback;
 
 import java.sql.SQLException;
 
-class UserDaoTest {
-    ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-    UserDao userDao = context.getBean("userDao", UserDao.class);
+import static org.assertj.core.api.Assertions.*;
 
-    @BeforeEach
-    public void beforeEach() throws SQLException, ClassNotFoundException {
-        userDao.deleteAll();
-    }
+class UserDaoTest {
 
     @Test
-    public void daoTest() throws SQLException, ClassNotFoundException {
-        User user = new User();
-        user.setId("id_1");
-        user.setName("user1");
-        user.setPassword("password");
-        userDao.add(user);
+    public void addAndGet() throws SQLException, ClassNotFoundException {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
+        UserDao dao = context.getBean("userDao", UserDao.class);
 
-        User user2 = userDao.get(user.getId());
-        Assertions.assertThat(user.getId()).isEqualTo(user2.getId());
+        dao.deleteAll();
+        assertThat(dao.getCount()).isEqualTo(0);
+
+        User user = new User();
+        user.setId("gyumee");
+        user.setName("박상철");
+        user.setPassword("springno1");
+
+        dao.add(user);
+
+        User user2 = dao.get(user.getId());
+        assertThat(user.getName()).isEqualTo(user2.getName());
+        assertThat(user.getPassword()).isEqualTo(user2.getPassword());
     }
 }
