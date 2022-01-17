@@ -2,7 +2,7 @@ package com.toby.spring.user.dao;
 
 import com.toby.spring.user.domain.User;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -13,7 +13,7 @@ class UserDaoTest {
     ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
     UserDao userDao = context.getBean("userDao", UserDao.class);
 
-    @BeforeEach
+    @AfterEach
     public void beforeEach() throws SQLException, ClassNotFoundException {
         userDao.deleteAll();
     }
