@@ -3,12 +3,8 @@ package com.toby.spring.user.dao;
 import com.toby.spring.user.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.test.context.ContextConfiguration;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
