@@ -2,23 +2,25 @@ package com.toby.spring.user.dao;
 
 import com.toby.spring.user.domain.Level;
 import com.toby.spring.user.domain.User;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.context.ContextConfiguration;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@SpringBootTest
+@ContextConfiguration(locations = "/test-applicationContext.xml")
 class UserDaoTest {
 
+    @Autowired
     private UserDao dao;
     private User user1;
     private User user2;
@@ -29,12 +31,6 @@ class UserDaoTest {
         this.user1 = new User("gyumee", "박상철", "springno1", Level.BASIC, 1, 0);
         this.user2 = new User("leegw700", "이길원", "springno2", Level.SILVER, 55, 10);
         this.user3 = new User("bumjin", "박범진", "springno3", Level.GOLD, 100, 40);
-
-        DataSource dataSource = new SingleConnectionDataSource(
-            "jdbc:h2:~/test-springbook", "sa", "", true);
-        UserDaoJdbc userDaoJdbc = new UserDaoJdbc();
-        userDaoJdbc.setDataSource(dataSource);
-        this.dao = userDaoJdbc;
     }
 
     @Test
