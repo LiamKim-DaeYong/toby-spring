@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,6 +23,8 @@ import static org.assertj.core.api.Assertions.*;
 class UserServiceTest {
     @Autowired UserService userService;
     @Autowired UserDao userDao;
+    @Autowired DataSource dataSource;
+    @Autowired PlatformTransactionManager transactionManager;
     List<User> users;
 
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
@@ -55,7 +60,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void upgradeLevels() {
+    public void upgradeLevels() throws SQLException {
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
@@ -63,14 +68,14 @@ class UserServiceTest {
 
         userService.upgradeLevels();
 
-        checkLevel(users.get(0), false);
-        checkLevel(users.get(1), true);
-        checkLevel(users.get(2), false);
-        checkLevel(users.get(3), true);
-        checkLevel(users.get(4), false);
+        checkLevelUpgraded(users.get(0), false);
+        checkLevelUpgraded(users.get(1), true);
+        checkLevelUpgraded(users.get(2), false);
+        checkLevelUpgraded(users.get(3), true);
+        checkLevelUpgraded(users.get(4), false);
     }
 
-    private void checkLevel(User user, boolean upgraded) {
+    private void checkLevelUpgraded(User user, boolean upgraded) {
         User userUpdate = userDao.get(user.getId());
 
         if (upgraded) {
@@ -78,5 +83,41 @@ class UserServiceTest {
         } else {
             assertThat(userUpdate.getLevel()).isEqualTo(user.getLevel());
         }
+    }
+
+    @Test
+    public void upgradeAllOrNothing() throws Exception {
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+        testUserService.setTransactionManager(this.transactionManager);
+
+        userDao.deleteAll();
+        for (User user : users) userDao.add(user);
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch (TestUserServiceException e) {
+
+        }
+
+        checkLevelUpgraded(users.get(1), false);
+    }
+
+    static class TestUserService extends UserService {
+        private String id;
+
+        public TestUserService(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public void upgradeLevel(User user) {
+            if (user.getId().equals(this.id)) throw new TestUserServiceException();
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
     }
 }
