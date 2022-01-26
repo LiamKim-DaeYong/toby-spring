@@ -6,6 +6,7 @@
     <bean id="userService" class="com.toby.spring.user.service.UserService">
         <property name="userDao" ref="userDao"/>
         <property name="transactionManager" ref="transactionManager"/>
+        <property name="mailSender" ref="mailSender"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -15,6 +16,8 @@
     <bean id="userDao" class="com.toby.spring.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
     </bean>
+
+    <bean id="mailSender" class="com.toby.spring.user.service.DumyMailSender"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
