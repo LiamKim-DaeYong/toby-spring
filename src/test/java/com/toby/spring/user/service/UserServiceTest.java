@@ -3,11 +3,14 @@ package com.toby.spring.user.service;
 import com.toby.spring.user.dao.UserDao;
 import com.toby.spring.user.domain.Level;
 import com.toby.spring.user.domain.User;
+import com.toby.spring.user.proxy.TransactionHandler;
+import com.toby.spring.user.proxy.TxProxyFactoryBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.mail.MailException;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.lang.reflect.Proxy;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +37,7 @@ class UserServiceTest {
     @Autowired DataSource dataSource;
     @Autowired PlatformTransactionManager transactionManager;
     @Autowired MailSender mailSender;
+    @Autowired ApplicationContext context;
     List<User> users;
 
     public static final int MIN_LOGCOUNT_FOR_SILVER = 50;
@@ -134,14 +139,15 @@ class UserServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void upgradeAllOrNothing() throws Exception {
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
         testUserService.setMailSender(mailSender);
 
-        UserServiceTx txUserService = new UserServiceTx();
-        txUserService.setTransactionManager(this.transactionManager);
-        txUserService.setUserService(testUserService);
+        TxProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", TxProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testUserService);
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         userDao.deleteAll();
         for (User user : users) userDao.add(user);

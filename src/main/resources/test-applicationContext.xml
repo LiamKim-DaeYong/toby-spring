@@ -3,9 +3,11 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="userService" class="com.toby.spring.user.service.UserServiceTx">
+    <bean id="userService" class="com.toby.spring.user.proxy.TxProxyFactoryBean">
+        <property name="target" ref="userServiceImpl"/>
         <property name="transactionManager" ref="transactionManager"/>
-        <property name="userService" ref="userServiceImpl"/>
+        <property name="pattern" value="upgradeLevels"/>
+        <property name="serviceInterface" value="com.toby.spring.user.service.UserService"/>
     </bean>
 
     <bean id="userServiceImpl" class="com.toby.spring.user.service.UserServiceImpl">
@@ -19,6 +21,10 @@
 
     <bean id="userDao" class="com.toby.spring.user.dao.UserDaoJdbc">
         <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="message" class="com.toby.spring.user.proxy.MessageFactoryBean">
+        <property name="text" value="Factory Bean"/>
     </bean>
 
     <bean id="mailSender" class="com.toby.spring.user.service.DumyMailSender"/>
