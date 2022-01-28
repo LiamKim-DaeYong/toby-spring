@@ -1,4 +1,4 @@
-package com.toby.spring.learningtest.jdk;
+package com.toby.spring.learningtest.jdk.proxy;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
