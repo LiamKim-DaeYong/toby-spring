@@ -3,16 +3,31 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="userService" class="com.toby.spring.user.proxy.TxProxyFactoryBean">
+    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
         <property name="target" ref="userServiceImpl"/>
-        <property name="transactionManager" ref="transactionManager"/>
-        <property name="pattern" value="upgradeLevels"/>
-        <property name="serviceInterface" value="com.toby.spring.user.service.UserService"/>
+        <property name="interceptorNames">
+            <list>
+                <value>transactionAdvisor</value>
+            </list>
+        </property>
     </bean>
 
     <bean id="userServiceImpl" class="com.toby.spring.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+    <bean id="transactionAdvice" class="com.toby.spring.user.proxy.TransactionAdvice">
+        <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+        <property name="mappedName" value="upgrade*"/>
+    </bean>
+
+    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="transactionAdvice"/>
+        <property name="pointcut" ref="transactionPointcut"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
