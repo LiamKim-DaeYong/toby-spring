@@ -3,16 +3,16 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target" ref="userServiceImpl"/>
-        <property name="interceptorNames">
-            <list>
-                <value>transactionAdvisor</value>
-            </list>
-        </property>
-    </bean>
+<!--    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">-->
+<!--        <property name="target" ref="userServiceImpl"/>-->
+<!--        <property name="interceptorNames">-->
+<!--            <list>-->
+<!--                <value>transactionAdvisor</value>-->
+<!--            </list>-->
+<!--        </property>-->
+<!--    </bean>-->
 
-    <bean id="userServiceImpl" class="com.toby.spring.user.service.UserServiceImpl">
+    <bean id="userService" class="com.toby.spring.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
         <property name="mailSender" ref="mailSender"/>
     </bean>
@@ -21,7 +21,8 @@
         <property name="transactionManager" ref="transactionManager"/>
     </bean>
 
-    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+    <bean id="transactionPointcut" class="com.toby.spring.user.proxy.NameMatchClassMethodPointcut">
+        <property name="mappedClassName" value="*ServiceImpl"/>
         <property name="mappedName" value="upgrade*"/>
     </bean>
 
@@ -41,6 +42,8 @@
     <bean id="message" class="com.toby.spring.user.proxy.MessageFactoryBean">
         <property name="text" value="Factory Bean"/>
     </bean>
+
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
 
     <bean id="mailSender" class="com.toby.spring.user.service.DumyMailSender"/>
 

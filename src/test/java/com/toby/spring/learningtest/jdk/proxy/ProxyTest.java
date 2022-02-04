@@ -81,7 +81,6 @@ public class ProxyTest {
         NameMatchMethodPointcut classMethodPointcut = new NameMatchMethodPointcut() {
             public ClassFilter getClassFilter() {
                 return new ClassFilter() {
-
                     @Override
                     public boolean matches(Class<?> clazz) {
                         return clazz.getSimpleName().startsWith("HelloT");
@@ -117,4 +116,6 @@ public class ProxyTest {
             assertThat(proxiedHello.sayThankYou("Toby")).isEqualTo("Thank You Toby");
         }
     }
+
+
 }
