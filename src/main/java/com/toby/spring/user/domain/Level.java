@@ -1,22 +1,22 @@
 package com.toby.spring.user.domain;
 
-public enum  Level {
+public enum Level {
     GOLD(3, null), SILVER(2, GOLD), BASIC(1, SILVER);
 
     private final int value;
-    private final Level next;
+    private final Level nextLevel;
 
-    Level(int value, Level next) {
+    Level(int value, Level nextLevel) {
         this.value = value;
-        this.next = next;
+        this.nextLevel = nextLevel;
     }
 
     public int intValue() {
         return value;
     }
 
-    public Level nextLevel() {
-        return this.next;
+    public Level getNextLevel() {
+        return nextLevel;
     }
 
     public static Level valueOf(int value) {

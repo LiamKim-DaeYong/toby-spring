@@ -30,7 +30,6 @@ public class Calculator {
 
     public String concatenate(String filepath) throws IOException {
         LineCallback<String> concatenateCallback = new LineCallback<String>() {
-
             @Override
             public String doSomethingWithLine(String line, String value) {
                 return value + line;
@@ -47,7 +46,6 @@ public class Calculator {
             br = new BufferedReader(new FileReader(filepath));
             T res = initVal;
             String line = null;
-
             while ((line = br.readLine()) != null) {
                 res = callback.doSomethingWithLine(line, res);
             }
@@ -58,8 +56,9 @@ public class Calculator {
             throw e;
         } finally {
             if (br != null) {
-                try { br.close(); }
-                catch (IOException e) { System.out.println(e.getMessage()); }
+                try {
+                    br.close();
+                }catch (IOException e) { System.out.println(e.getMessage()); }
             }
         }
     }

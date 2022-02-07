@@ -15,5 +15,5 @@ public interface UserDao {
 
     int getCount();
 
-    void update(User user);
+    public void update(User user);
 }
