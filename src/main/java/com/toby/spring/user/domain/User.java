@@ -1,6 +1,6 @@
 package com.toby.spring.user.domain;
 
-public class User {
+public final class User {
 
     private String id;
     private String name;
@@ -8,6 +8,7 @@ public class User {
     private Level level;
     private int login;
     private int recommend;
+    private String email;
 
     public User() {
     }
@@ -68,4 +69,23 @@ public class User {
     public void setRecommend(int recommend) {
         this.recommend = recommend;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void upgradeLevel() {
+        Level nextLevel = this.level.nextLevel();
+
+        if (nextLevel == null) {
+            throw new IllegalStateException(this.level + "은 업그레이드가 불가능합니다");
+        } else {
+            this.level = nextLevel;
+        }
+    }
+
 }

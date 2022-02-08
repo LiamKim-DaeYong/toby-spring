@@ -10,8 +10,20 @@
         <property name="password" value="" />
     </bean>
 
-    <bean id="userService" class="com.toby.spring.user.service.UserService">
+    <bean id="userService" class="com.toby.spring.user.service.UserServiceTx">
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="userService" ref="userServiceImpl"/>
+    </bean>
+
+    <bean id="userServiceImpl" class="com.toby.spring.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao"/>
+        <property name="mailSender" ref="mailSender"/>
+    </bean>
+
+    <bean id="mailSender" class="com.toby.spring.user.service.DummyMailSender"/>
+
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <bean id="userDao" class="com.toby.spring.user.dao.UserDaoJdbc">
